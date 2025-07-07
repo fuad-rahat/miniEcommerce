@@ -9,7 +9,8 @@
     "dev:full": "concurrently \"npm run dev:backend\" \"npm run dev\"",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start":"node index.js"
   },
   "dependencies": {
     "@types/node": "^20.10.0",
