@@ -13,7 +13,7 @@ interface Category {
 
 interface Product {
   id: string;
-  name: string;
+  title: string;
   category: string;
   price: number;
   image: string;
@@ -28,7 +28,13 @@ interface Order {
   status?: string;
   date?: string;
   createdAt?: string;
-  cartItems?: Array<{ total: number; status: string; createdAt?: string }>;
+  cartItems?: Array<{
+    id: number;
+    title: string;
+    price: number;
+    image: string;
+    quantity: number;
+  }>;
 }
 
 const staticCategories = [
@@ -36,8 +42,8 @@ const staticCategories = [
   { id: '2', name: 'Books', image: 'https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400' },
 ];
 const staticProducts = [
-  { id: '1', name: 'Premium Wireless Headphones', category: 'Electronics', price: 299.99, image: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=400' },
-  { id: '2', name: 'Bestselling Novel', category: 'Books', price: 19.99, image: 'https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { id: '1', title: 'Premium Wireless Headphones', category: 'Electronics', price: 299.99, image: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { id: '2', title: 'Bestselling Novel', category: 'Books', price: 19.99, image: 'https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400' },
 ];
 const staticOrders = [
   { id: '1', customer: 'John Doe', total: 399.98, status: 'Pending', date: '2024-07-01' },
@@ -57,7 +63,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const [catImage, setCatImage] = useState('');
   const [catUploading, setCatUploading] = useState(false);
   const [catUploadError, setCatUploadError] = useState('');
-  const [prodName, setProdName] = useState('');
+  const [prodTitle, setProdTitle] = useState('');
   const [prodPrice, setProdPrice] = useState('');
   const [prodCategory, setProdCategory] = useState('');
   const [prodImage, setProdImage] = useState('');
@@ -134,7 +140,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center">
-      <div className="relative w-full max-w-5xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 min-h-[70vh] flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-5xl bg-white dark:bg-gray-500 rounded-2xl shadow-2xl p-8 min-h-[70vh] flex flex-col max-h-[90vh]">
         <button
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl"
           onClick={onClose}
@@ -170,7 +176,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   {categories.map(cat => (
                     <li key={cat.id} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 rounded p-2">
                       <img src={cat.image} alt={cat.name} className="w-10 h-10 rounded object-cover border" />
-                      <span className="font-semibold flex-1">{cat.name}</span>
+                      <span className="font-semibold text-white flex-1">{cat.name}</span>
                       <button className="text-xs px-2 py-1 bg-yellow-400 rounded hover:bg-yellow-500" onClick={() => setEditCategory(cat)}>Edit</button>
                       <button className="text-xs px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600" onClick={() => setDeleteConfirm({ type: 'category', id: cat.id })}>Delete</button>
                     </li>
@@ -186,8 +192,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 <ul className="space-y-3">
                   {products.map(prod => (
                     <li key={prod.id} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 rounded p-2">
-                      <img src={prod.image} alt={prod.name} className="w-10 h-10 rounded object-cover border" />
-                      <span className="font-semibold flex-1">{prod.name}</span>
+                      <img src={prod.image} alt={prod.title} className="w-10 h-10 rounded object-cover border" />
+                      <span className="font-semibold flex-1 text-white">{prod.title}</span>
                       <span className="text-xs text-gray-500">{prod.category}</span>
                       <span className="text-xs text-gray-700 dark:text-gray-200">${prod.price}</span>
                       <button className="text-xs px-2 py-1 bg-yellow-400 rounded hover:bg-yellow-500" onClick={() => setEditProduct(prod)}>Edit</button>
@@ -205,7 +211,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <ul className="space-y-3">
                 {orders.map((order, idx) => (
                   <li key={getOrderId(order)} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 rounded p-2 cursor-pointer" onClick={() => setSelectedOrder(order)}>
-                    <span className="font-semibold flex-1">Order {idx + 1}</span>
+                    <span className="font-semibold text-white flex-1">Order {idx + 1}</span>
                     <span className="text-xs text-gray-500">{getOrderCustomer(order)}</span>
                     <span className="text-xs text-gray-700 dark:text-gray-200">${order.total}</span>
                     <span className="text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">{order.status}</span>
@@ -230,7 +236,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         {/* Add Category Modal */}
         {showAddCategory && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40">
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-md relative">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-md relative text-gray-900 dark:text-gray-100">
               <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl" onClick={() => setShowAddCategory(false)}>&times;</button>
               <h3 className="text-xl font-bold mb-4 text-emerald-700 dark:text-emerald-400">Add Category</h3>
               <form className="flex flex-col gap-4" onSubmit={async e => {
@@ -252,7 +258,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   setCatUploadError('Failed to add category');
                 }
               }}>
-                <input type="text" placeholder="Category Name" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" value={catName} onChange={e => setCatName(e.target.value)} />
+                <input type="text" placeholder="Category Name" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={catName} onChange={e => setCatName(e.target.value)} />
                 <input type="file" accept="image/*" className="px-4 py-2" onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) handleImgbbUpload(file, setCatImage, setCatUploading, setCatUploadError);
@@ -268,18 +274,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         {/* Add Product Modal */}
         {showAddProduct && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40">
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-md relative">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-md relative text-gray-900 dark:text-gray-100">
               <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl" onClick={() => setShowAddProduct(false)}>&times;</button>
               <h3 className="text-xl font-bold mb-4 text-emerald-700 dark:text-emerald-400">Add Product</h3>
               <form className="flex flex-col gap-4" onSubmit={async e => {
                 e.preventDefault();
-                if (!prodName || !prodPrice || !prodCategory || !prodImage) return;
+                if (!prodTitle || !prodPrice || !prodCategory || !prodImage) return;
                 try {
                   const res = await fetch(`${API_BASE_URL}/api/products`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                      name: prodName,
+                      title: prodTitle,
                       price: parseFloat(prodPrice),
                       category: prodCategory,
                       image: prodImage,
@@ -288,7 +294,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   if (!res.ok) throw new Error('Failed to add product');
                   const newProd = await res.json();
                   setProducts(prev => [...prev, newProd]);
-                  setProdName('');
+                  setProdTitle('');
                   setProdPrice('');
                   setProdCategory('');
                   setProdImage('');
@@ -297,9 +303,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   setProdUploadError('Failed to add product');
                 }
               }}>
-                <input type="text" placeholder="Product Name" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" value={prodName} onChange={e => setProdName(e.target.value)} />
-                <input type="number" placeholder="Price" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" value={prodPrice} onChange={e => setProdPrice(e.target.value)} />
-                <select className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" value={prodCategory} onChange={e => setProdCategory(e.target.value)}>
+                <input type="text" placeholder="Product Name" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={prodTitle} onChange={e => setProdTitle(e.target.value)} />
+                <input type="number" placeholder="Price" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={prodPrice} onChange={e => setProdPrice(e.target.value)} />
+                <select className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={prodCategory} onChange={e => setProdCategory(e.target.value)}>
                   <option value="">Select Category</option>
                   {categories.map(cat => (
                     <option key={cat.id} value={cat.name}>{cat.name}</option>
@@ -320,7 +326,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         {/* Edit Category Modal */}
         {editCategory && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/40">
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-md relative">
+            <div className="bg-white dark:bg-gray-500 rounded-xl shadow-2xl p-8 w-full max-w-md relative text-gray-900 dark:text-gray-100">
               <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl" onClick={() => setEditCategory(null)}>&times;</button>
               <h3 className="text-xl font-bold mb-4 text-emerald-700 dark:text-emerald-400">Edit Category</h3>
               <form className="flex flex-col gap-4" onSubmit={async e => {
@@ -338,7 +344,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   console.error('Failed to update category', err);
                 }
               }}>
-                <input type="text" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" value={editCategory.name} onChange={e => setEditCategory({ ...editCategory, name: e.target.value })} />
+                <input type="text" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={editCategory.name} onChange={e => setEditCategory({ ...editCategory, name: e.target.value })} />
                 <input type="file" accept="image/*" className="px-4 py-2" onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) handleImgbbUpload(file, url => setEditCategory({ ...editCategory, image: url }), () => {}, () => {});
@@ -352,7 +358,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         {/* Edit Product Modal */}
         {editProduct && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/40">
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-md relative">
+            <div className="bg-white dark:bg-gray-500 rounded-xl shadow-2xl p-8 w-full max-w-md relative text-gray-900 dark:text-gray-100">
               <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl" onClick={() => setEditProduct(null)}>&times;</button>
               <h3 className="text-xl font-bold mb-4 text-emerald-700 dark:text-emerald-400">Edit Product</h3>
               <form className="flex flex-col gap-4" onSubmit={async e => {
@@ -362,7 +368,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                      name: editProduct.name,
+                      title: editProduct.title,
                       price: editProduct.price,
                       category: editProduct.category,
                       image: editProduct.image,
@@ -375,9 +381,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                   console.error('Failed to update product', err);
                 }
               }}>
-                <input type="text" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" value={editProduct.name} onChange={e => setEditProduct({ ...editProduct, name: e.target.value })} />
-                <input type="number" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" value={editProduct.price} onChange={e => setEditProduct({ ...editProduct, price: Number(e.target.value) })} />
-                <select className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" value={editProduct.category} onChange={e => setEditProduct({ ...editProduct, category: e.target.value })}>
+                <input type="text" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={editProduct.title} onChange={e => setEditProduct({ ...editProduct, title: e.target.value })} />
+                <input type="number" className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={editProduct.price} onChange={e => setEditProduct({ ...editProduct, price: Number(e.target.value) })} />
+                <select className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={editProduct.category} onChange={e => setEditProduct({ ...editProduct, category: e.target.value })}>
                   {categories.map(cat => (
                     <option key={cat.id} value={cat.name}>{cat.name}</option>
                   ))}
@@ -395,7 +401,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
           <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/40">
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-xs relative text-center">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-xs relative text-center text-gray-900 dark:text-gray-100">
               <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl" onClick={() => setDeleteConfirm(null)}>&times;</button>
               <h3 className="text-xl font-bold mb-4 text-emerald-700 dark:text-emerald-400">Confirm Delete</h3>
               <p className="mb-6">Are you sure you want to delete this {deleteConfirm.type}?</p>
@@ -416,7 +422,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
         {/* Order Details Modal */}
         {selectedOrder && (
           <div className="fixed inset-0 z-[140] flex items-center justify-center bg-black/40">
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-8 w-full max-w-md relative">
+            <div className="bg-white dark:bg-gray-600 rounded-xl shadow-2xl p-8 w-full max-w-md relative text-gray-900 dark:text-gray-100">
               <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl" onClick={() => setSelectedOrder(null)}>&times;</button>
               <h3 className="text-xl font-bold mb-4 text-emerald-700 dark:text-emerald-400">Order Details</h3>
               <div className="flex flex-col gap-2">
@@ -431,13 +437,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                     {order.customerInfo?.address && (
                       <div><span className="font-semibold">Address:</span> {order.customerInfo.address}</div>
                     )}
+                    <div><span className="font-semibold">Total:</span> ${order.total}</div>
+                    <div><span className="font-semibold">Status:</span> {order.status}</div>
+                    <div><span className="font-semibold">Date:</span> {order.createdAt ? new Date(order.createdAt).toLocaleString() : '-'}</div>
                     <div className="mt-2"><span className="font-semibold">Items:</span></div>
                     <div className="flex flex-col gap-2">
-                      {(order.cartItems as Array<{ total: number; status: string; createdAt?: string }> | undefined)?.map((item: { total: number; status: string; createdAt?: string }, idx: number) => (
-                        <div key={idx} className="border rounded p-2 bg-gray-50 dark:bg-gray-800">
-                          <div><span className="font-semibold">Total:</span> ${item.total}</div>
-                          <div><span className="font-semibold">Status:</span> {item.status}</div>
-                          <div><span className="font-semibold">Date:</span> {item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'}</div>
+                      {order.cartItems?.map((item, idx) => (
+                        <div key={idx} className="border rounded p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700 flex items-center gap-3">
+                          <img src={item.image} alt={item.title} className="w-12 h-12 rounded object-cover border" />
+                          <div className="flex-1">
+                            <div><span className="font-semibold">Product:</span> {item.title}</div>
+                            <div><span className="font-semibold">Price:</span> ${item.price}</div>
+                            <div><span className="font-semibold">Quantity:</span> {item.quantity}</div>
+                          </div>
                         </div>
                       ))}
                     </div>
