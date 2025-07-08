@@ -25,7 +25,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, category }) =
       // Check if we got real server data or fallback data
       // This is a simple heuristic - in a real app you might have a better way to detect this
       try {
-        const response = await fetch('https://miniecommerce-1.onrender.com/api/products', {
+        const response = await fetch('/api/products', {
           signal: AbortSignal.timeout(2000)
         });
         setIsServerAvailable(response.ok);
