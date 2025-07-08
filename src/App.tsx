@@ -14,6 +14,7 @@ import PremiumPromo from './components/PremiumPromo';
 import Footer from './components/Footer';
 import AdminLoginModal from './components/AdminLoginModal';
 import AdminPanel from './components/AdminPanel';
+import { getCategories } from './services/api';
 
 type View = 'home' | 'product';
 
@@ -38,8 +39,7 @@ function App() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('/api/categories');
-        const cats = await res.json();
+        const cats = await getCategories();
         setCategories(Array.isArray(cats) && cats.length > 0 ? cats : staticCategories);
       } catch {
         setCategories(staticCategories);
