@@ -131,7 +131,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
     
-    const response = await fetch(`${API_BASE_URL}/products`, {
+    const response = await fetch(`${API_BASE_URL}/api/products`, {
       signal: controller.signal
     });
     
@@ -154,7 +154,7 @@ export const fetchProductById = async (id: number): Promise<Product> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
     
-    const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
       signal: controller.signal
     });
     
@@ -181,7 +181,7 @@ export const submitOrder = async (customerInfo: CustomerInfo, cartItems: CartIte
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout for orders
     
-    const response = await fetch(`${API_BASE_URL}/checkout`, {
+    const response = await fetch(`${API_BASE_URL}/api/checkout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
