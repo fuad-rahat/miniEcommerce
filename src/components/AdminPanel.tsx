@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../services/api';
+import { API_BASE_URL, getProducts, getCategories } from '../services/api';
 
 interface AdminPanelProps {
   onClose: () => void;
@@ -71,21 +71,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [catRes, prodRes, orderRes] = await Promise.all([
-          fetch('/api/categories'),
-          fetch('/api/products'),
-          fetch('/api/orders'),
+        const [cats, prods] = await Promise.all([
+          getCategories(),
+          getProducts()
         ]);
-        const cats = await catRes.json();
-        const prods = await prodRes.json();
-        const ords = await orderRes.json();
         setCategories(Array.isArray(cats) && cats.length > 0 ? cats : staticCategories);
         setProducts(Array.isArray(prods) && prods.length > 0 ? prods : staticProducts);
-        setOrders(Array.isArray(ords) && ords.length > 0 ? ords : staticOrders);
       } catch {
         setCategories(staticCategories);
         setProducts(staticProducts);
-        setOrders(staticOrders);
       }
     };
     fetchData();
@@ -281,7 +275,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 e.preventDefault();
                 if (!prodName || !prodPrice || !prodCategory || !prodImage) return;
                 try {
-                  const res = await fetch(`${API_BASE_URL}/products`, {
+                  const res = await fetch(`${API_BASE_URL}/api/products`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -364,7 +358,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <form className="flex flex-col gap-4" onSubmit={async e => {
                 e.preventDefault();
                 try {
-                  const res = await fetch(`${API_BASE_URL}/products/${editProduct.id}`, {
+                  const res = await fetch(`${API_BASE_URL}/api/products/${editProduct.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
