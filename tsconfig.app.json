@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/server", "server/index.js"], "server"
+  "include": ["src", "src/server", "server/index.js"]
 }
