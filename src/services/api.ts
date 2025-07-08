@@ -1,7 +1,7 @@
 import { Product, CustomerInfo, CartItem } from '../types';
 import { fallbackProducts, fallbackCategories } from '../static/fallbackData';
 
-const API_BASE_URL = 'https://miniecommerce-1.onrender.com';
+export const API_BASE_URL = 'https://miniecommerce-1.onrender.com';
 
 async function fetchWithFallback(endpoint: string, fallback: unknown) {
   try {

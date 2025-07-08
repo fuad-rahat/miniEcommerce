@@ -4,7 +4,7 @@ import { Wifi, WifiOff } from 'lucide-react';
 import { Product } from '../types';
 import ProductCard from './ProductCard';
 import { ProductGridSkeleton } from './SkeletonLoader';
-import { fetchProducts } from '../services/api';
+import { getProducts } from '../services/api';
 
 interface ProductGridProps {
   onProductClick: (product: Product) => void;
@@ -19,7 +19,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, category }) =
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const data = await fetchProducts();
+      const data = await getProducts();
       setProducts(data);
       
       // Check if we got real server data or fallback data
