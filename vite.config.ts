@@ -9,7 +9,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:3001',
+      '/api': 'https://miniecommerce-1.onrender.com',
     },
   },
 });
