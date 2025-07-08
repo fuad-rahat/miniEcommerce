@@ -94,7 +94,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/orders`);
+        const res = await fetch(`${API_BASE_URL}/api/orders`);
         const data = await res.json();
         setOrders(Array.isArray(data) ? data : []);
       } catch {
@@ -220,7 +220,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                       e.stopPropagation();
                       if (window.confirm('Are you sure you want to delete this order?')) {
                         try {
-                          await fetch(`${API_BASE_URL}/orders/${getOrderId(order)}`, { method: 'DELETE' });
+                          await fetch(`${API_BASE_URL}/api/orders/${getOrderId(order)}`, { method: 'DELETE' });
                           setOrders(prev => prev.filter(o => getOrderId(o) !== getOrderId(order)));
                         } catch (err) {
                           console.error('Failed to delete order', err);
@@ -243,7 +243,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
                 e.preventDefault();
                 if (!catName || !catImage) return;
                 try {
-                  const res = await fetch(`${API_BASE_URL}/categories`, {
+                  const res = await fetch(`${API_BASE_URL}/api/categories`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: catName, image: catImage }),
@@ -332,7 +332,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
               <form className="flex flex-col gap-4" onSubmit={async e => {
                 e.preventDefault();
                 try {
-                  const res = await fetch(`${API_BASE_URL}/categories/${editCategory.id}`, {
+                  const res = await fetch(`${API_BASE_URL}/api/categories/${editCategory.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: editCategory.name, image: editCategory.image }),
